@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import http from "./services/httpService";
-
-const apiEndpoint = "http://jsonplaceholder.typicode.com/posts";
+import config from "./config.json";
 
 class App extends Component {
   state = {
@@ -10,13 +9,13 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    const { data: posts } = await http.get(apiEndpoint);
+    const { data: posts } = await http.get(config.apiEndpoint);
     this.setState({ posts });
   }
 
   handleAdd = async () => {
     const newPost = { title: "New Post", body: "New body" };
-    const { data: post } = await http.post(apiEndpoint, newPost);
+    const { data: post } = await http.post(config.apiEndpoint, newPost);
     console.log(post);
     const posts = [post, ...this.state.posts];
     this.setState({ posts });
@@ -24,7 +23,7 @@ class App extends Component {
 
   handleUpdate = async post => {
     post.title = "Hayder updated this title!";
-    const data = await http.put(`${apiEndpoint}/${post.id}`, post);
+    const data = await http.put(`${config.apiEndpoint}/${post.id}`, post);
     console.log(data);
     const posts = [...this.state.posts];
     const index = posts.indexOf(post);
@@ -39,7 +38,7 @@ class App extends Component {
     this.setState({ posts });
 
     try {
-      await http.delete(`${apiEndpoint}/${post.id}`);
+      await http.delete(`${config.apiEndpoint}/${post.id}`);
     } catch (ex) {
       console.log("interceptor reject promise returns here!");
       if (ex.response && ex.response.status === 404) {
